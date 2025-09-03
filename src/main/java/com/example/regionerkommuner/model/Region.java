@@ -1,10 +1,7 @@
 package com.example.regionerkommuner.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +15,7 @@ public class Region {
     public String navn;
     public String href;
 
-    @OneToMany(mappedBy = "region")
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Kommune> kommuner = new HashSet<>();
 
