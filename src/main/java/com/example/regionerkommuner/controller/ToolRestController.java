@@ -28,7 +28,7 @@ public class ToolRestController {
             return lstRegion;
         }
 
-    @GetMapping("deleteregion/{kode}")
+    @DeleteMapping("deleteregion/{kode}")
     public ResponseEntity<String> deleteKommune(@PathVariable String kode) {
         Optional<Region> orgRegion = regionRepository.findById(Integer.valueOf(kode));
         if (orgRegion.isPresent()) {
