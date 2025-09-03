@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/tool")
@@ -24,9 +26,9 @@ public class ToolRestController {
 
     @GetMapping("getregioner")
     public List<Region> getRegioner() {
-            List<Region> lstRegion = apiServiceGetRegioner.getRegioner();
-            return lstRegion;
-        }
+        List<Region> lstRegion = apiServiceGetRegioner.getRegioner();
+        return lstRegion;
+    }
 
     @DeleteMapping("deleteregion/{kode}")
     public ResponseEntity<String> deleteKommune(@PathVariable String kode) {
@@ -38,5 +40,19 @@ public class ToolRestController {
             return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("getKommuneByRegion/{regionKode}")
+    public ResponseEntity<List<String>> getKommuneByRegion(@PathVariable String regionKode) {
+        Optional<Region> orgRegion = regionRepository.findById(Integer.valueOf(regionKode));
+        if (orgRegion.isPresent()) {
+            List<String> kommuneNames = new ArrayList<>();
+            for (Kommune kommune : orgRegion.get().getKommuner()) {
+                kommuneNames.add(kommune.getNavn());
+            }
+            return new ResponseEntity<>(kommuneNames, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+}
 
