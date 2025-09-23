@@ -23,8 +23,7 @@ public class KommuneRestController {
 
     @GetMapping("getkommuner")
     public List<Kommune> getKommuner() {
-        List<Kommune> lstKommune = apiServiceGetKommuner.getKommuner();
-        return lstKommune;
+        return apiServiceGetKommuner.getKommuner();
     }
 
 

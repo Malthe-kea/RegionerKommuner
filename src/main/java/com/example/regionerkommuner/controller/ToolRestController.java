@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/tool")
 public class ToolRestController {
 
@@ -26,8 +27,7 @@ public class ToolRestController {
 
     @GetMapping("getregioner")
     public List<Region> getRegioner() {
-        List<Region> lstRegion = apiServiceGetRegioner.getRegioner();
-        return lstRegion;
+        return apiServiceGetRegioner.getRegioner();
     }
 
     @DeleteMapping("deleteregion/{kode}")
@@ -54,5 +54,18 @@ public class ToolRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/region")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Region postRegion(@RequestBody Region region) {
+        System.out.println(region);
+        return regionRepository.save(region);
+    }
+
+    @PostMapping("/region2")
+    public ResponseEntity<String> postRegion2(@RequestParam String kode, @RequestParam String navn) {
+        return ResponseEntity.ok("Received kode: " + kode + ", navn: " + navn);
+    }
+
 }
 
