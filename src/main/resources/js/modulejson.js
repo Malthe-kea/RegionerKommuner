@@ -15,7 +15,6 @@ async function postObjectAsJson(url, object, httpVerbum) {
 }
 
 
-
 function fetchAnyUrl(url) {
     return fetch(url).then(response => response.json()).catch(error => console.error("Handled error xx:", error));
 }

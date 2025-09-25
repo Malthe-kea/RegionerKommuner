@@ -5,6 +5,7 @@ console.log("er i kommunetable")
 const urlKommune = "http://localhost:8080/kommuner/kommuner"
 const pbCreateKommuneTable = document.getElementById("pbGetKommuner")
 const tblKommuner = document.getElementById("tblKommuner")
+const kommuneMap = new Map()
 
 actionGetKommuner();
 
@@ -38,13 +39,20 @@ function createTable(kommune) {
     cell.innerHTML = kommune.region.kode
 
     cell = row.insertCell(cellCount++)
-    cell.innerHTML = kommune.region.navn
+    const dropdown = document.createElement('select');
+    cell.appendChild(fillDropDown(dropdown));
+    dropdown.value = kommune.region.kode;
+    dropdown.addEventListener('change', (event) => {
+        const selectedValue = event.target.value; // dette er k.region.kode
+        console.log("Valgt værdi:", selectedValue);
+        sendValueToDatabase(selectedValue);
+    });
+
 
     cell = row.insertCell(cellCount++);
     const pbDelete = document.createElement("button");
-    pbDelete.innerHTML = "🗑️"; // skraldespandsikon
-    pbDelete.title = "Slet kommune"; // tooltip når man holder musen over
-    pbDelete.className = "btn1"; // css klasse til styling
+    pbDelete.innerHTML = "Delete";
+    pbDelete.className = "btn1";
     cell.appendChild(pbDelete);
 
     row.id = kommune.kode;
@@ -62,6 +70,7 @@ function createTable(kommune) {
             }
 
             document.getElementById(kommune.kode).remove();
+            alert("Kommune " + kommune.navn + " slettet");
             console.log("Kommune slettet fra DB og tabel");
         } catch (err) {
             console.error(err);
@@ -85,4 +94,43 @@ async function fetchKommuner() {
 function actionGetKommuner() {
     fetchKommuner();
 }
+
+function fillDropDown(dropdown) {
+    console.log("filling dropdown in fillDropDown()");
+
+    const addedRegions = new Set();
+
+    kommuner.forEach(k => {
+        if (!addedRegions.has(k.region.navn)) {
+            const el = document.createElement("option");
+            el.textContent = k.region.navn;
+            el.value = k.region.kode;
+            dropdown.appendChild(el);
+            addedRegions.add(k.region.navn);
+        }
+
+        // Opdater kommuneMap uanset om option blev tilføjet
+        kommuneMap.set(k.kode, k.navn);
+    });
+
+    return dropdown;
+}
+
+function sendValueToDatabase(kode) {
+    fetch('http://localhost:8080/kommuner/updateKommune', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ regionKode: kode })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Database opdateret:", data);
+        })
+        .catch(error => {
+            console.error("Fejl ved opdatering:", error);
+        });
+}
+
 
