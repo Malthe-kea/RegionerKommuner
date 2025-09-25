@@ -10,6 +10,7 @@ public class Kommune {
     public String kode;
     public String navn;
     public String href;
+    public String hrefPhoto;
 
     @ManyToOne
     @JoinColumn(name = "region", referencedColumnName = "kode")
@@ -45,5 +46,13 @@ public class Kommune {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public String getHrefPhoto() {
+        return hrefPhoto;
+    }
+
+    public void setHrefPhoto(String hrefPhoto) {
+        this.hrefPhoto = hrefPhoto;
     }
 }

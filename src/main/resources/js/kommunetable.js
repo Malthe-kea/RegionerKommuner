@@ -2,9 +2,11 @@ import {fetchAnyUrl} from "./modulejson.js";
 
 console.log("er i kommunetable")
 
-const urlKommune = "http://localhost:8080/kommuner/getkommuner"
+const urlKommune = "http://localhost:8080/kommuner/kommuner"
 const pbCreateKommuneTable = document.getElementById("pbGetKommuner")
 const tblKommuner = document.getElementById("tblKommuner")
+
+actionGetKommuner();
 
 function createTable(kommune) {
     let cellCount = 0
@@ -24,25 +26,48 @@ function createTable(kommune) {
     cell.innerHTML = kommune.href
     cell.style.width = "50%"
 
+    cell = row.insertCell(cellCount++);
+    let img = document.createElement("img");
+    img.setAttribute("src", kommune.hrefPhoto);
+    img.setAttribute("alt", "intet billede");
+    img.setAttribute("width", 150);
+    img.setAttribute("height", 150);
+    cell.appendChild(img);
+
     cell = row.insertCell(cellCount++)
     cell.innerHTML = kommune.region.kode
 
     cell = row.insertCell(cellCount++)
     cell.innerHTML = kommune.region.navn
 
-    cell = row.insertCell(cellCount++)
-    const pbDelete = document.createElement("input");
-    pbDelete.type = "button";
-    pbDelete.setAttribute("value", "Slet kommune");
+    cell = row.insertCell(cellCount++);
+    const pbDelete = document.createElement("button");
+    pbDelete.innerHTML = "🗑️"; // skraldespandsikon
+    pbDelete.title = "Slet kommune"; // tooltip når man holder musen over
+    pbDelete.className = "btn1"; // css klasse til styling
     cell.appendChild(pbDelete);
 
-    pbDelete.className = "btn1"
+    row.id = kommune.kode;
 
-    row.id = kommune.navn
-    pbDelete.onclick = function() {
-        document.getElementById(kommune.navn).remove();
-        deleteKommune(kommune);
-    }
+    pbDelete.onclick = async function () {
+        console.log("skal slette kommune med kode=" + kommune.kode);
+
+        try {
+            const response = await fetch(`http://localhost:8080/kommuner/deletekommune/${kommune.kode}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                throw new Error("Kunne ikke slette kommunen i DB (status " + response.status + ")");
+            }
+
+            document.getElementById(kommune.kode).remove();
+            console.log("Kommune slettet fra DB og tabel");
+        } catch (err) {
+            console.error(err);
+            alert("Der skete en fejl ved sletning af kommune " + kommune.kode);
+        }
+    };
 
 }
 
@@ -61,4 +86,3 @@ function actionGetKommuner() {
     fetchKommuner();
 }
 
-pbCreateKommuneTable.addEventListener('click', actionGetKommuner)

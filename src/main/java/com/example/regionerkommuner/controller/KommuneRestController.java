@@ -27,6 +27,19 @@ public class KommuneRestController {
         return apiServiceGetKommuner.getKommuner();
     }
 
+    @GetMapping("kommuner")
+    public List<Kommune> fetchAllKommuner() {
+        return kommuneRepository.findAll();
+    }
 
-
+    @DeleteMapping("deletekommune/{kode}")
+    public ResponseEntity<String> deleteKommune(@PathVariable String kode) {
+        Optional<Kommune> orgKommune = kommuneRepository.findById(kode);
+        if (orgKommune.isPresent()) {
+            kommuneRepository.deleteById(kode);
+            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
