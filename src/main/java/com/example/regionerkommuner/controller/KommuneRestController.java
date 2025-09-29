@@ -43,11 +43,13 @@ public class KommuneRestController {
         }
     }
 
-    @PostMapping ("updateKommune")
-    public ResponseEntity<String> updateKommune(@RequestBody Kommune kommune) {
-        Optional<Kommune> orgKommune = kommuneRepository.findById(kommune.getKode());
+    @PostMapping("updateKommune/{gammelKode}/{nyKode}")
+    public ResponseEntity<String> updateKommune(@PathVariable String gammelKode, @PathVariable String nyKode) {
+        Optional<Kommune> orgKommune = kommuneRepository.findById(gammelKode);
         if (orgKommune.isPresent()) {
-            kommuneRepository.save(kommune);
+            Kommune kom = orgKommune.get();
+            kom.setKode(nyKode);
+            kommuneRepository.save(kom);
             return new ResponseEntity<>("Updated", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);

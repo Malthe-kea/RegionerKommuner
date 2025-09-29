@@ -3,7 +3,6 @@ import {fetchAnyUrl} from "./modulejson.js";
 console.log("er i kommunetable")
 
 const urlKommune = "http://localhost:8080/kommuner/kommuner"
-const pbCreateKommuneTable = document.getElementById("pbGetKommuner")
 const tblKommuner = document.getElementById("tblKommuner")
 const kommuneMap = new Map()
 
@@ -14,7 +13,7 @@ function createTable(kommune) {
     let rowCount = tblKommuner.rows.length
     let row = tblKommuner.insertRow(rowCount)
     console.log(kommune)
-    //console.log(kommune)
+
     let cell = row.insertCell(cellCount++)
     cell.innerHTML = kommune.kode
     cell.style.width = "25%"
